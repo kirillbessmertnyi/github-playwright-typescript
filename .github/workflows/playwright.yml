@@ -1,6 +1,30 @@
 name: Playwright Tests
 on:
   workflow_dispatch:
+    inputs:
+      AquaURL:
+        description: 'URL'
+        required: true
+        default: 'https://aqua-auto-aqamasterpla.aqua-testing.com/aquaWebNG'
+        type: string
+      AquaUsername:
+        description: 'Username'
+        required: true
+        default: 'put your username'
+        type: string
+      AquaPassword:
+        description: 'Password'
+        required: true
+        default: 'put your password'
+        type: string
+
+env:
+  CI: true
+  DEBUG: pw:api
+  AQUA_URL: ${{ github.event.inputs.AquaURL || 'https://aqua-auto-aqamasterpla.aqua-testing.com/aquaWebNG' }}
+  AQUA_USERNAME: ${{ github.event.inputs.AquaUsername }}
+  AQUA_PASSWORD: ${{ github.event.inputs.AquaPassword }}
+
     
 jobs:
   test:
@@ -13,6 +37,11 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: npm ci
+    - name: Inject env variables
+      run: |
+        echo ${{ env.AQUA_URL }}
+        echo ${{ env.AQUA_USERNAME }}
+        echo ${{ env.AQUA_PASSWORD }}
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
